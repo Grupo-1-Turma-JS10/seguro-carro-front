@@ -9,3 +9,9 @@ export const criarVeiculo = async (veiculoData: CriarVeiculoDTO) => {
     const response = await api.post('/veiculo', veiculoData);
     return response.data;
 }
+
+export const buscarVeiculos = async () => {
+    const response = await api.get('/veiculo');
+    return response.data;
+}
+
