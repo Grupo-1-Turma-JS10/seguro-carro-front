@@ -1,18 +1,30 @@
 import { useState, useEffect } from 'react';
 import { Car, Edit2, Trash2, Plus, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { buscarVeiculos } from '../../service/Service';
+import type CriarVeiculoDTO from '../../model/veiculo/CriarVeiculoDTO';
 
 export function Segurados() {
-    const [cars, setCars] = useState<Array<any>>([{}]);
+    const [cars, setCars] = useState<Array<CriarVeiculoDTO>>([]);
+    const navigate = useNavigate();
     const insurance = {
         name: 'Seguro Completo',
         monthlyPrice: 199.99,
     };
-    const navigate = useNavigate();
-
+   
     useEffect(() => {
+        buscaVeiculos();
+        
     }, []);
 
+   const buscaVeiculos = async () => {
+    buscarVeiculos().then((data) => {
+        setCars(data);
+    }).catch((error) => {
+        console.error('Erro ao buscar veículos:', error);
+    });
+   };
+    
     const getStatusConfig = (status: string) => {
         const configs = {
             active: {
@@ -80,7 +92,7 @@ export function Segurados() {
                                                 <div className="flex-1">
                                                     <div className="flex items-start gap-3 mb-2">
                                                         <h3 className="text-2xl font-bold text-gray-900">
-                                                            carro marca e modelo
+                                                            {car.marca} {car.modelo}
                                                         </h3>
                                                         <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusConfig("active").color}`}>
                                                             {getStatusConfig("active").label}
@@ -89,16 +101,16 @@ export function Segurados() {
                                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                                                         <div>
                                                             <span className="text-gray-500 block">Placa</span>
-                                                            <span className="font-mono font-bold text-gray-900">Placa</span>
+                                                            <span className="font-mono font-bold text-gray-900">{car.placa}</span>
                                                         </div>
                                                         <div>
                                                             <span className="text-gray-500 block">Ano</span>
-                                                            <span className="font-bold text-gray-900">Ano</span>
+                                                            <span className="font-bold text-gray-900">{car.ano}</span>
                                                         </div>
-                                                        <div>
+                                                       {/* <div>
                                                             <span className="text-gray-500 block">Cor</span>
                                                             <span className="font-bold text-gray-900">Cor</span>
-                                                        </div>
+                                                        </div>*/}
                                                         <div>
                                                             <span className="text-gray-500 block">Plataforma</span>
                                                             <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${getPlatformConfig("uber").color}`}>
@@ -112,8 +124,8 @@ export function Segurados() {
                                             <div className="lg:w-1/3 space-y-4">
                                                 <div className="bg-gray-50 p-4 rounded-xl">
                                                     <div className="text-sm text-gray-600 mb-1">Motorista</div>
-                                                    <div className="font-bold text-gray-900">nome</div>
-                                                    <div className="text-sm text-gray-600">telefone</div>
+                                                    <div className="font-bold text-gray-900">{car.nome}</div>
+                                                    <div className="text-sm text-gray-600">{car.telefone}</div>
                                                 </div>
 
                                                 {insurance && (
