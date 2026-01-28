@@ -1,16 +1,26 @@
 import { useNavigate } from 'react-router-dom';
 import { Header } from '../../components/veiculo/Header';
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { Save } from 'lucide-react';
+import type CriarVeiculoDTO from '../../model/veiculo/CriarVeiculoDTO';
+import { criarVeiculo } from '../../service/Service';
 
 export function VeiculoForm() {
     const navigate = useNavigate();
+    const [veiculo, setVeiculo] = useState<CriarVeiculoDTO>({} as CriarVeiculoDTO);
 
-    useEffect(() => {
-    }, []);
+    
+    const criaVeiculo = async (veiculoData: CriarVeiculoDTO) => {
+        criarVeiculo(veiculoData).then(() => {
+            console.log('Veículo criado com sucesso');
+        }).catch((error) => {
+            console.error('Erro ao criar veículo:', error);
+        });
+    }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        criaVeiculo(veiculo);
 
         alert('Carro salvo com sucesso!');
         navigate('/segurados');
@@ -38,8 +48,8 @@ export function VeiculoForm() {
                                 <input
                                     type="text"
                                     required
-                                    // value={...}
-                                    // onChange={(e) => setFormData({ ...formData, driverName: e.target.value })}
+                                    value={veiculo.nome}
+                                    onChange={(e) => setVeiculo({ ...veiculo, nome: e.target.value })}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     placeholder="Ex: João da Silva"
                                 />
@@ -52,8 +62,8 @@ export function VeiculoForm() {
                                 <input
                                     type="tel"
                                     required
-                                    // value={...}
-                                    //onChange={(e) => setFormData({ ...formData, driverPhone: e.target.value })}
+                                    value={veiculo.telefone}
+                                    onChange={(e) => setVeiculo({ ...veiculo, telefone: e.target.value })}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     placeholder="(11) 99999-9999"
                                 />
@@ -66,8 +76,8 @@ export function VeiculoForm() {
                                 <input
                                     type="text"
                                     required
-                                    // value={...}
-                                    //onChange={(e) => setFormData({ ...formData, driverPhone: e.target.value })}
+                                    value={veiculo.cpf_cnpj}
+                                    onChange={(e) => setVeiculo({ ...veiculo, cpf_cnpj: e.target.value })}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     placeholder="000.000.000-00 ou 00.000.000/0000-00"
                                 />
@@ -80,8 +90,8 @@ export function VeiculoForm() {
                                 <input
                                     type="date"
                                     required
-                                    // value={...}
-                                    //onChange={(e) => setFormData({ ...formData, driverPhone: e.target.value })}
+                                    value={veiculo.data_nascimento}
+                                    onChange={(e) => setVeiculo({ ...veiculo, data_nascimento: e.target.value })}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     placeholder="DD/MM/AAAA"
                                 />
@@ -94,22 +104,36 @@ export function VeiculoForm() {
                                 <input
                                     type="email"
                                     required
-                                    // value={...}
-                                    //onChange={(e) => setFormData({ ...formData, driverPhone: e.target.value })}
+                                    value={veiculo.email}
+                                    onChange={(e) => setVeiculo({ ...veiculo, email: e.target.value })}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                    placeholder="DD/MM/AAAA"
+                                    placeholder="exemplo@email.com"
+                                />
+                            </div>
+                            
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Endereço *
+                                </label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={veiculo.endereco}
+                                    onChange={(e) => setVeiculo({ ...veiculo, endereco: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                    placeholder="Rua tal, 0 - Cidade, Estado"
                                 />
                             </div>
                         </div>
 
-                        <div>
+                       {/*  <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Plataforma de Trabalho *
                             </label>
                             <select
                                 required
-                                //value={...}
-                                //onChange={(e) => setFormData({ ...formData, appPlatform: e.target.value })}
+                                value={veiculo.plataforma_trabalho}
+                                onChange={(e) => setVeiculo({ ...veiculo, plataforma_trabalho: e.target.value })}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                             >
                                 <option value="uber">Uber</option>
@@ -117,8 +141,8 @@ export function VeiculoForm() {
                                 <option value="indriver">InDriver</option>
                                 <option value="other">Outra</option>
                             </select>
-                        </div>
-                    </div>
+                        </div>*/}
+                    </div> 
 
                     <div className="space-y-6">
                         <h2 className="text-2xl font-bold text-gray-900 border-b pb-3">
@@ -133,8 +157,8 @@ export function VeiculoForm() {
                                 <input
                                     type="text"
                                     required
-                                    // value={...}
-                                    // onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                                    value={veiculo.marca}
+                                    onChange={(e) => setVeiculo({ ...veiculo, marca: e.target.value })}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     placeholder="Ex: Toyota, Honda, Chevrolet"
                                 />
@@ -147,8 +171,8 @@ export function VeiculoForm() {
                                 <input
                                     type="text"
                                     required
-                                    // value={...}
-                                    // onChange={(e) => setFormData({ ...formData, model: e.target.value })}
+                                    value={veiculo.modelo}
+                                    onChange={(e) => setVeiculo({ ...veiculo, modelo: e.target.value })}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     placeholder="Ex: Corolla, Civic, Onix"
                                 />
@@ -163,26 +187,26 @@ export function VeiculoForm() {
                                     required
                                     min="1900"
                                     max={new Date().getFullYear() + 1}
-                                    // value={...}
-                                    // onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                                    value={veiculo.ano}
+                                    onChange={(e) => setVeiculo({ ...veiculo, ano: Number(e.target.value) })}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     placeholder="2024"
                                 />
                             </div>
 
-                            <div>
+                            {/*<div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Cor *
                                 </label>
                                 <input
                                     type="text"
                                     required
-                                    // value={...}
-                                    // onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                                    value={veiculo.cor}
+                                    onChange={(e) => setVeiculo({ ...veiculo, cor: e.target.value })}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     placeholder="Ex: Prata, Branco, Preto"
                                 />
-                            </div>
+                            </div>*/}
 
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -191,8 +215,8 @@ export function VeiculoForm() {
                                 <input
                                     type="text"
                                     required
-                                    // value={...}
-                                    // onChange={(e) => setFormData({ ...formData, licensePlate: e.target.value })}
+                                    value={veiculo.placa}
+                                    onChange={(e) => setVeiculo({ ...veiculo, placa: e.target.value })}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors uppercase"
                                     placeholder="ABC1D23 ou ABC-1234"
                                     maxLength={8}

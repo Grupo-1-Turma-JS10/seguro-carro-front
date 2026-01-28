@@ -1,5 +1,11 @@
 import axios from "axios";
+import type CriarVeiculoDTO from "../model/veiculo/CriarVeiculoDTO";
 
 const api = axios.create({
-    baseURL: 'http://localhost:3000',
+    baseURL:`http://localhost:4000`
 });
+
+export const criarVeiculo = async (veiculoData: CriarVeiculoDTO) => {
+    const response = await api.post('/veiculo', veiculoData);
+    return response.data;
+}
