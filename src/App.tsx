@@ -1,16 +1,14 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "./pages/home/Home";
+import { BrowserRouter, Routes } from "react-router-dom"
+import Footer from "./components/footer/Footer"
 
 function App() {
   const BASE_URL = import.meta.env.PROD ? "/seguro-carro-front" : "/";
 
-  return (
-    <BrowserRouter basename={BASE_URL}>
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </BrowserRouter>
-  );
+        </Routes>
+         <Footer />
+      </BrowserRouter>
+    </>
+  )
 }
 
 export default App;
