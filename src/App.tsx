@@ -1,13 +1,14 @@
 import { BrowserRouter, Routes } from "react-router-dom"
 import Footer from "./components/footer/Footer"
-import Navbar from "./components/navbar/Navbar" // 1. Importe sua Navbar aqui
+import Navbar from "./components/navbar/Navbar"
 
 function App() {
+  const BASE_URL = import.meta.env.PROD ? "/seguro-carro-front" : "/";
+
   return (
     <>
       <BrowserRouter>
-        <Navbar /> {/* 2. Coloque a Navbar aqui para ela fixar no topo */}
-        <div className='min-h-[80vh]'> {/* 3. Dica: div para empurrar o footer para baixo */}
+        <Navbar />
           <Routes>
             {/* Rotas aqui */}
           </Routes>
@@ -18,4 +19,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
