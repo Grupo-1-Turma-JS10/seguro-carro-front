@@ -20,7 +20,7 @@ function Navbar() {
 
         {/* Centro: Menu de Navegação */}
         <nav className='hidden md:flex items-center gap-8 font-medium'>
-          <Link to='/home' className='flex items-center gap-2 text-blue-600 bg-blue-50 px-4 py-2 rounded-xl'>
+          <Link to='/' className='flex items-center gap-2 text-blue-600 bg-blue-50 px-4 py-2 rounded-xl'>
             <House size={20} />
             Home
           </Link>
@@ -28,7 +28,7 @@ function Navbar() {
             <ShieldCheck size={20} />
             Seguros
           </Link>
-          <Link to='/produtos' className='flex items-center gap-2 hover:text-blue-600 transition-all'>
+          <Link to='/segurados' className='flex items-center gap-2 hover:text-blue-600 transition-all'>
             <Car size={20} />
             Carros Segurados
           </Link>
