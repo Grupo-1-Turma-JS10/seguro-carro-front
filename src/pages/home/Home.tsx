@@ -11,7 +11,6 @@ import {
     DollarSign,
 } from "lucide-react";
 import { useState } from "react";
-import Footer from "../../components/footer/Footer";
 
 function Home() {
     const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
