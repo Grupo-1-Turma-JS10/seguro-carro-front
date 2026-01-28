@@ -12,7 +12,6 @@ function App() {
           <Routes>
             {/* Rotas aqui */}
           </Routes>
-        </div>
         <Footer />
       </BrowserRouter>
     </>
