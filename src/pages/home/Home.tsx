@@ -72,38 +72,6 @@ function Home() {
     return (
         <div className="min-h-screen bg-white text-gray-900">
 
-            <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
-                <div className="max-w-7xl mx-auto px-6 lg:px-8 flex items-center justify-between h-16">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-blue-600 rounded-xl p-3">
-                            <Car className="w-6 h-6 text-white" />
-                        </div>
-                        <div>
-                            <h1 className="font-bold text-lg">SeguroCarro</h1>
-                            <p className="text-xs text-gray-500">Proteção para seu Veículo</p>
-                        </div>
-                    </div>
-
-                    <div className="hidden md:flex items-center gap-8">
-                        <a className="text-sm font-medium text-gray-600 hover:text-blue-600">
-                            <div><HomeIcon className="w-4 h-4 mr-2 inline" />Seguros</div>
-                        </a>
-                        <a className="text-sm font-medium text-gray-600 hover:text-blue-600">
-                            <div><Shield className="w-4 h-4 mr-2 inline" />Seguros</div>
-                        </a>
-                        <a className="text-sm font-medium text-gray-600 hover:text-blue-600">
-
-                            <div><Car className="w-4 h-4 mr-2 inline" />Carros Segurados</div>
-
-                        </a>
-                        <button className="bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 transition shadow-md text-sm font-medium">
-                            Contratar Seguro
-                        </button>
-                    </div>
-                </div>
-            </nav>
-
-
             <section className="relative h-screen flex items-center overflow-hidden">
 
                 <div
@@ -254,8 +222,8 @@ function Home() {
                             onMouseEnter={() => setHoveredFeature(index)}
                             onMouseLeave={() => setHoveredFeature(null)}
                             className={`p-8 rounded-2xl bg-white border transition-all duration-300 ${hoveredFeature === index
-                                    ? "border-blue-600 shadow-xl scale-105"
-                                    : "border-gray-200 shadow-md"
+                                ? "border-blue-600 shadow-xl scale-105"
+                                : "border-gray-200 shadow-md"
                                 }`}
                         >
                             <div className="mb-4 p-3 rounded-xl bg-blue-100 w-fit">
@@ -380,11 +348,7 @@ function Home() {
             </section>
 
 
-            <footer className="bg-gray-900 text-white py-10 text-center">
-                <p className="text-sm text-gray-400">
-                    © 2026 SeguroCarro. Todos os direitos reservados.
-                </p>
-            </footer>
+
         </div>
     );
 }

@@ -6,14 +6,13 @@ import { VeiculoForm } from "./pages/segurados/VeiculoForm"
 import Home from "./pages/home/Home"
 
 function App() {
-  const BASE_URL = "/seguro-carro-front";
+  const BASE_URL =  "/seguro-carro-front";
 
   return (
     <>
       <BrowserRouter basename={BASE_URL}>
         <Navbar />
         <Routes>
-          {/* Rotas aqui */}
           <Route path="/" element={<Home />} />
           <Route path="/segurados" element={<Segurados />} />
           <Route path="/segurados/novo" element={<VeiculoForm />} />
