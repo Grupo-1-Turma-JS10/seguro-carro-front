@@ -68,15 +68,18 @@ export function VeiculoForm() {
         });
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        criaVeiculo(veiculo).then((veiculoCriado) => {
+        try {
+            const veiculoCriado = await criaVeiculo(veiculo);
             if (seguroSelecionado && veiculoCriado?.id) {
-                vincularSeguroAoVeiculo(Number(seguroSelecionado), veiculoCriado.id);
+                await vincularSeguroAoVeiculo(Number(seguroSelecionado), veiculoCriado.id);
             }
-        }).finally(() => {
+        } catch (error) {
+            console.error('Erro ao criar veículo:', error);
+        } finally {
             navigate('/segurados');
-        });
+        }
     };
 
     return (
