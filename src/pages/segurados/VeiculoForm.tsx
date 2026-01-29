@@ -52,7 +52,7 @@ export function VeiculoForm() {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <Header carEdit={false} />
+            <Header carEdit={veiculo.id !== undefined} />
 
             <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-8 space-y-8">
