@@ -3,16 +3,19 @@ import { Header } from '../../components/veiculo/Header';
 import { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
 import type CriarVeiculoDTO from '../../model/veiculo/CriarVeiculoDTO';
-import { buscarSeguros, buscarVeiculoPorId, contratarSeguro, criarVeiculo } from '../../service/Service';
+import { buscarSeguros, buscarVeiculoPorId, contratarSeguro, criarVeiculo, editarVeiculo } from '../../service/Service';
 
 export function VeiculoForm() {
     const navigate = useNavigate();
+    const [seguroSelecionado, setSeguroSelecionado] = useState<string>('');
+    const [seguros, setSeguros] = useState([]);
     interface Erros {
         nome?: string;
         cpf_cnpj?: string;
         data_nascimento?: string;
         telefone?: string;
     }
+    const [erros, setErros] = useState<Erros>({});
     const [veiculo, setVeiculo] = useState<CriarVeiculoDTO>({
         nome: '',
         cpf_cnpj: '',
@@ -28,7 +31,6 @@ export function VeiculoForm() {
         valor_final_total: 0,
         desconto: 0,
     });
-    const [erros, setErros] = useState<Erros>({});
     const { id } = useParams();
 
     useEffect(() => {
@@ -49,7 +51,30 @@ export function VeiculoForm() {
             });
     }
 
-   
+    const criaVeiculo = async (veiculoData: CriarVeiculoDTO): Promise<CriarVeiculoDTO> => {
+        return criarVeiculo(veiculoData).then((data) => {
+            return data;
+        }).catch((error) => {
+            console.error('Erro ao criar veículo:', error);
+            throw error;
+        });
+    }
+
+    const buscaSeguros = async () => {
+        buscarSeguros().then(data => {
+            setSeguros(data);
+        }).catch((error) => {
+            console.error('Erro ao buscar seguros:', error);
+        });
+    }
+
+    const vincularSeguroAoVeiculo = async (seguroId: number, veiculoId: number) => {
+        return contratarSeguro(seguroId, veiculoId).then(() => {
+        }).catch((error) => {
+            console.error('Erro ao vincular seguro ao veículo:', error);
+        });
+    }
+
     const validarNome = (nome: string): string | undefined => {
         if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(nome) || /\d/.test(nome)) {
             return 'Nome não pode conter números ou caracteres especiais';
@@ -93,9 +118,8 @@ export function VeiculoForm() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('handleSubmit chamado');
-        const novosErros: any = {};
 
+        const novosErros: Erros = {};
         const erroNome = validarNome(veiculo.nome);
         const erroCpfCnpj = validarCpfCnpj(veiculo.cpf_cnpj);
         const erroData = validarDataNascimento(veiculo.data_nascimento);
@@ -107,17 +131,25 @@ export function VeiculoForm() {
         if (erroTelefone) novosErros.telefone = erroTelefone;
 
         setErros(novosErros);
-        console.log('novosErros', novosErros);
 
         if (Object.keys(novosErros).length > 0) {
-            console.log('Formulário com erros — abortando submit');
             return;
         }
 
-        
-        
-        criarVeiculo(veiculo);
-        navigate('/segurados');
+        try {
+            if (!veiculo.id) {
+                const veiculoCriado = await criaVeiculo(veiculo);
+                if (seguroSelecionado && veiculoCriado?.id) {
+                    await vincularSeguroAoVeiculo(Number(seguroSelecionado), veiculoCriado.id);
+                }
+            } else {
+                await editarVeiculo(veiculo);
+            }
+        } catch (error) {
+            console.error('Erro ao criar veículo:', error);
+        } finally {
+            navigate('/segurados');
+        }
     };
 
     return (
@@ -140,11 +172,8 @@ export function VeiculoForm() {
                                     type="text"
                                     required
                                     value={veiculo.nome}
-                                    onChange={(e) => {
-                                        setVeiculo({ ...veiculo, nome: e.target.value });
-                                        setErros({ ...erros, nome: undefined });
-                                    }}
-                                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${erros.nome ? 'border-red-500' : 'border-gray-300'}`}
+                                    onChange={(e) => setVeiculo({ ...veiculo, nome: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     placeholder="Ex: João da Silva"
                                 />
                                 {erros.nome && <p className="text-red-500 text-sm mt-1">{erros.nome}</p>}
@@ -158,16 +187,9 @@ export function VeiculoForm() {
                                     type="tel"
                                     required
                                     value={veiculo.telefone}
-                                    onChange={(e) => {
-                                        const novoTelefone = e.target.value.replace(/\D/g, '');
-                                        if (novoTelefone.length <= 11) {
-                                            setVeiculo({ ...veiculo, telefone: novoTelefone });
-                                            setErros({ ...erros, telefone: undefined });
-                                        }
-                                    }}
-                                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${erros.telefone ? 'border-red-500' : 'border-gray-300'}`}
-                                    placeholder="(11)999999999"
-                                    maxLength={11}
+                                    onChange={(e) => setVeiculo({ ...veiculo, telefone: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                    placeholder="(11) 99999-9999"
                                 />
                                 {erros.telefone && <p className="text-red-500 text-sm mt-1">{erros.telefone}</p>}
                             </div>
@@ -180,15 +202,8 @@ export function VeiculoForm() {
                                     type="text"
                                     required
                                     value={veiculo.cpf_cnpj}
-                                    onChange={(e) => {
-                                        const novoValor = e.target.value;
-                                        const apenasNumeros = novoValor.replace(/\D/g, '');
-                                        if (apenasNumeros.length <= 14) {
-                                            setVeiculo({ ...veiculo, cpf_cnpj: novoValor });
-                                            setErros({ ...erros, cpf_cnpj: undefined });
-                                        }
-                                    }}
-                                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${erros.cpf_cnpj ? 'border-red-500' : 'border-gray-300'}`}
+                                    onChange={(e) => setVeiculo({ ...veiculo, cpf_cnpj: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     placeholder="000.000.000-00 ou 00.000.000/0000-00"
                                 />
                                 {erros.cpf_cnpj && <p className="text-red-500 text-sm mt-1">{erros.cpf_cnpj}</p>}
@@ -202,11 +217,8 @@ export function VeiculoForm() {
                                     type="date"
                                     required
                                     value={veiculo.data_nascimento}
-                                    onChange={(e) => {
-                                        setVeiculo({ ...veiculo, data_nascimento: e.target.value });
-                                        setErros({ ...erros, data_nascimento: undefined });
-                                    }}
-                                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${erros.data_nascimento ? 'border-red-500' : 'border-gray-300'}`}
+                                    onChange={(e) => setVeiculo({ ...veiculo, data_nascimento: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     placeholder="DD/MM/AAAA"
                                 />
                                 {erros.data_nascimento && <p className="text-red-500 text-sm mt-1">{erros.data_nascimento}</p>}
@@ -334,7 +346,7 @@ export function VeiculoForm() {
                         <h2 className="text-2xl font-bold text-gray-900 border-b pb-3">
                             Informações do Seguro
                         </h2>
-                        
+
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Seguros *
@@ -369,7 +381,7 @@ export function VeiculoForm() {
                             className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2"
                         >
                             <Save className="w-5 h-5" />
-                            {false ? 'Salvar Alterações' : 'Cadastrar Carro'}
+                            {veiculo.id ? 'Salvar Alterações' : 'Cadastrar Carro'}
                         </button>
                     </div>
                 </form>

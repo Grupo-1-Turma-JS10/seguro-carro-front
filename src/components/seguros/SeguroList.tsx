@@ -1,45 +1,50 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { 
   Edit2, 
   Trash2, 
   Plus, 
   CheckCircle2, 
-  X, 
-  ShieldCheck, 
-  Info, 
-  DollarSign, 
-  Shield, 
-  FileText, 
   ShieldAlert,
   AlertTriangle 
 } from 'lucide-react';
-import { type Seguro } from '../../pages/seguros/Seguros';
+import { buscarSeguros, cancelarSeguro } from '../../service/Service';
+import type Seguro from '../../model/seguro/Seguro';
+import { useNavigate } from 'react-router-dom';
 
 interface SeguroListProps {
   onEdit: (seguro: Seguro) => void;
   onAddNew: () => void;
 }
 
-export function SeguroList({ onEdit, onAddNew }: SeguroListProps) {
-  const [selectedSeguro, setSelectedSeguro] = useState<Seguro | null>(null);
+export function SeguroList({onAddNew }: SeguroListProps) {
   const [seguroParaExcluir, setSeguroParaExcluir] = useState<Seguro | null>(null);
+  const [seguros, setSeguros] = useState<Seguro[]>([]);
+  const navigate = useNavigate();
 
-  const planos: Seguro[] = [
-    { 
-      id: '1', 
-      name: 'Plano Essencial', 
-      description: 'Proteção básica para o seu veículo com assistência 24h em todo o território nacional.', 
-      monthlyPrice: 140.00, 
-      coverageAmount: 14000, 
-      coverageType: 'Cobertura Total', 
-      deductible: 1400 
+  useEffect(() => {
+    buscaSeguros();
+  }, []);
+
+  const buscaSeguros = async() => {
+    try {
+      const seguros = await buscarSeguros();
+      setSeguros(seguros);
+    } catch (error) {
+      console.error("Erro ao buscar seguros:", error);
     }
-  ];
+  }
 
-  const hasPlanos = planos.length > 0;
+  const hasPlanos = seguros.length > 0;
 
-  const confirmarExclusao = () => {
-    console.log("Excluindo plano:", seguroParaExcluir?.id);
+  const confirmarExclusao = async () => {
+    if (seguroParaExcluir?.id) {
+      try {
+        await cancelarSeguro(seguroParaExcluir.id);
+        setSeguros(seguros.filter(s => s.id !== seguroParaExcluir.id));
+      } catch (error) {
+        console.error("Erro ao excluir seguro:", error);
+      }
+    }
     setSeguroParaExcluir(null);
   };
 
@@ -53,7 +58,7 @@ export function SeguroList({ onEdit, onAddNew }: SeguroListProps) {
             <p className="text-blue-100 mt-2 text-base md:text-lg opacity-90 font-medium">Gerencie as opções de proteção disponíveis</p>
           </div>
           {hasPlanos && (
-            <button onClick={onAddNew} className="w-full md:w-auto bg-white text-blue-600 px-8 py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-blue-50 active:scale-95 transition-all duration-200 shadow-xl shadow-blue-900/10 font-bold group cursor-pointer">
+            <button onClick={() => navigate('/seguros/novo')} className="w-full md:w-auto bg-white text-blue-600 px-8 py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-blue-50 active:scale-95 transition-all duration-200 shadow-xl shadow-blue-900/10 font-bold group cursor-pointer">
               <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" /> Novo Plano
             </button>
           )}
@@ -64,20 +69,20 @@ export function SeguroList({ onEdit, onAddNew }: SeguroListProps) {
       <div className="max-w-7xl mx-auto px-4 py-12 w-full flex-grow flex flex-col">
         {hasPlanos ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {planos.map(plano => (
-              <div key={plano.id} className="bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden">
+            {seguros.map(seguro => (
+              <div key={seguro.id} className="bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden">
                 
                 <div className="bg-blue-600 p-6 md:p-8 flex justify-between items-center">
-                  <h3 className="text-xl font-bold text-white">{plano.name}</h3>
+                  <h3 className="text-xl font-bold text-white">{seguro.cobertura}</h3>
                   <div className="flex gap-2">
                     <button 
-                      onClick={() => onEdit(plano)} 
+                      onClick={() => navigate(`/seguros/editar/${seguro.id}`)} 
                       className="p-2.5 text-white/80 hover:text-white hover:bg-white/20 active:scale-90 rounded-xl transition-all cursor-pointer"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button 
-                      onClick={() => setSeguroParaExcluir(plano)} 
+                      onClick={() => setSeguroParaExcluir(seguro)} 
                       className="p-2.5 text-white/80 hover:text-red-200 hover:bg-red-500/20 active:scale-90 rounded-xl transition-all cursor-pointer"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -88,7 +93,9 @@ export function SeguroList({ onEdit, onAddNew }: SeguroListProps) {
                 <div className="px-6 md:px-8 mt-6 mb-6">
                   <h3 className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">A partir de</h3>
                   <div className="flex items-baseline">
-                    <span className="text-3xl md:text-4xl font-black text-blue-600">R$ {plano.monthlyPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                    <span className="text-3xl md:text-4xl font-black text-blue-600">
+                      R$ {(seguro.valor / 12).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </span>
                     <span className="text-gray-500 text-sm font-medium ml-1">/mês</span>
                   </div>
                 </div>
@@ -96,16 +103,16 @@ export function SeguroList({ onEdit, onAddNew }: SeguroListProps) {
                 <div className="px-6 md:px-8 mb-8"><div className="h-px bg-gray-100 w-full"></div></div>
 
                 <div className="px-6 md:px-8 space-y-5 flex-grow mb-8 text-sm">
-                   <div className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5" /><div><p className="text-gray-400 text-[10px] uppercase font-bold">Tipo de Cobertura</p><p className="text-gray-800 font-bold">{plano.coverageType}</p></div></div>
-                   <div className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5" /><div><p className="text-gray-400 text-[10px] uppercase font-bold">Valor de Cobertura</p><p className="text-gray-800 font-bold">R$ {plano.coverageAmount.toLocaleString('pt-BR')}</p></div></div>
-                   <div className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5" /><div><p className="text-gray-400 text-[10px] uppercase font-bold">Franquia</p><p className="text-gray-800 font-bold">R$ {plano.deductible.toLocaleString('pt-BR')}</p></div></div>
+                   <div className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5" /><div><p className="text-gray-400 text-[10px] uppercase font-bold">Tipo de Cobertura</p><p className="text-gray-800 font-bold">{seguro.cobertura}</p></div></div>
+                   <div className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5" /><div><p className="text-gray-400 text-[10px] uppercase font-bold">Valor de Cobertura</p><p className="text-gray-800 font-bold">R$ {seguro.valor.toLocaleString('pt-BR')}</p></div></div>
+                   <div className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5" /><div><p className="text-gray-400 text-[10px] uppercase font-bold">Franquia</p><p className="text-gray-800 font-bold">R$ {seguro.franquia.toLocaleString('pt-BR')}</p></div></div>
                 </div>
 
-                <div className="p-6 md:p-8 pt-0">
-                  <button onClick={() => setSelectedSeguro(plano)} className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-blue-700 active:scale-[0.98] transition-all cursor-pointer shadow-lg shadow-blue-50">
+                {/*<div className="p-6 md:p-8 pt-0">
+                  <button onClick={() => setSelectedSeguro(seguro)} className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-blue-700 active:scale-[0.98] transition-all cursor-pointer shadow-lg shadow-blue-50">
                     <Info className="w-5 h-5" /> Ver Detalhes do Plano
                   </button>
-                </div>
+                </div>*/}
               </div>
             ))}
           </div>
@@ -136,7 +143,7 @@ export function SeguroList({ onEdit, onAddNew }: SeguroListProps) {
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-2">Excluir Plano?</h3>
               <p className="text-gray-500 leading-relaxed">
-                Tem certeza que deseja excluir o <strong>{seguroParaExcluir.name}</strong>? Esta ação não poderá ser desfeita.
+                Tem certeza que deseja excluir o <strong>{seguroParaExcluir.cobertura}</strong>? Esta ação não poderá ser desfeita.
               </p>
             </div>
             
@@ -159,7 +166,7 @@ export function SeguroList({ onEdit, onAddNew }: SeguroListProps) {
       )}
 
       {/* Modal de Detalhes do Plano */}
-      {selectedSeguro && (
+      {/*{selectedSeguro && (
         <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center bg-black/60 backdrop-blur-sm p-0 md:p-4 cursor-pointer" onClick={() => setSelectedSeguro(null)}>
           <div className="bg-white w-full max-w-2xl rounded-t-[32px] md:rounded-[32px] shadow-2xl overflow-hidden animate-in slide-in-from-bottom md:zoom-in-95 duration-300 cursor-default flex flex-col max-h-[95vh]" onClick={e => e.stopPropagation()}>
             <div className="bg-blue-600 p-6 md:p-8 text-white relative">
@@ -169,7 +176,7 @@ export function SeguroList({ onEdit, onAddNew }: SeguroListProps) {
               <div className="flex items-center gap-4">
                 <div className="bg-white/20 p-3 rounded-2xl hidden sm:block"><ShieldCheck className="w-8 h-8" /></div>
                 <div>
-                  <h2 className="text-xl md:text-2xl font-bold">{selectedSeguro.name}</h2>
+                  <h2 className="text-xl md:text-2xl font-bold">{selectedSeguro.cobertura}</h2>
                   <p className="text-blue-100 text-sm opacity-90">Detalhamento completo do plano</p>
                 </div>
               </div>
@@ -179,18 +186,18 @@ export function SeguroList({ onEdit, onAddNew }: SeguroListProps) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                 <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center gap-4">
                   <div className="bg-blue-100 p-2.5 rounded-xl text-blue-600"><DollarSign className="w-5 h-5" /></div>
-                  <div><p className="text-[10px] uppercase font-bold text-gray-400">Mensalidade</p><p className="text-lg font-bold text-blue-600">R$ {selectedSeguro.monthlyPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p></div>
+                  <div><p className="text-[10px] uppercase font-bold text-gray-400">Mensalidade</p><p className="text-lg font-bold text-blue-600">R$ {(selectedSeguro.valor / 12).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p></div>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center gap-4">
                   <div className="bg-green-100 p-2.5 rounded-xl text-green-600"><Shield className="w-5 h-5" /></div>
-                  <div><p className="text-[10px] uppercase font-bold text-gray-400">Tipo de Cobertura</p><p className="text-lg font-bold text-gray-800">{selectedSeguro.coverageType}</p></div>
+                  <div><p className="text-[10px] uppercase font-bold text-gray-400">Tipo de Cobertura</p><p className="text-lg font-bold text-gray-800">{selectedSeguro.cobertura}</p></div>
                 </div>
               </div>
               <div className="space-y-4 mb-8">
                 <h4 className="flex items-center gap-2 text-sm font-bold text-gray-900 uppercase tracking-widest"><FileText className="w-4 h-4 text-blue-600" /> Especificações</h4>
                 <div className="border border-gray-100 rounded-2xl overflow-hidden text-sm">
                   <div className="flex justify-between p-4 bg-gray-50/50 border-b border-gray-100"><span className="text-gray-500">Valor Máximo de Cobertura</span><span className="font-bold text-gray-900">R$ {selectedSeguro.coverageAmount.toLocaleString('pt-BR')}</span></div>
-                  <div className="flex justify-between p-4 bg-white"><span className="text-gray-500">Valor da Franquia</span><span className="font-bold text-gray-900">R$ {selectedSeguro.deductible.toLocaleString('pt-BR')}</span></div>
+                  <div className="flex justify-between p-4 bg-white"><span className="text-gray-500">Valor da Franquia</span><span className="font-bold text-gray-900">R$ {selectedSeguro.valor.toLocaleString('pt-BR')}</span></div>
                 </div>
               </div>
               <div className="mb-8">
@@ -203,7 +210,7 @@ export function SeguroList({ onEdit, onAddNew }: SeguroListProps) {
             </div>
           </div>
         </div>
-      )}
+      )}*/}
     </div>
   );
 }

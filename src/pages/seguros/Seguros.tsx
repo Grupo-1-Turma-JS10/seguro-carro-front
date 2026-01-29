@@ -1,16 +1,7 @@
 import { useState } from 'react';
 import { SeguroList } from '../../components/seguros/SeguroList';
 import { SeguroForm } from '../../components/seguros/SeguroForm';
-
-export interface Seguro {
-  id: string;
-  name: string;
-  description: string;
-  coverageAmount: number;
-  monthlyPrice: number;
-  coverageType: string;
-  deductible: number;
-}
+import type Seguro from '../../model/seguro/Seguro';
 
 type Tela = 'lista' | 'formulario';
 
@@ -31,10 +22,7 @@ export default function Seguros() {
           onAddNew={() => abrirFormulario()} 
         />
       ) : (
-        <SeguroForm 
-          editingSeguro={seguroSendoEditado} 
-          onBack={() => setTelaAtiva('lista')} 
-        />
+        <SeguroForm />
       )}
     </div>
   );
