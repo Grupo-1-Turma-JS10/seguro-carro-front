@@ -9,6 +9,13 @@ export function VeiculoForm() {
     const navigate = useNavigate();
     const [seguroSelecionado, setSeguroSelecionado] = useState<string>('');
     const [seguros, setSeguros] = useState([]);
+    interface Erros {
+        nome?: string;
+        cpf_cnpj?: string;
+        data_nascimento?: string;
+        telefone?: string;
+    }
+    const [erros, setErros] = useState<Erros>({});
     const [veiculo, setVeiculo] = useState<CriarVeiculoDTO>({
         nome: '',
         cpf_cnpj: '',
@@ -68,8 +75,67 @@ export function VeiculoForm() {
         });
     }
 
+    const validarNome = (nome: string): string | undefined => {
+        if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(nome) || /\d/.test(nome)) {
+            return 'Nome não pode conter números ou caracteres especiais';
+        }
+        return undefined;
+    };
+
+    const validarCpfCnpj = (cpf_cnpj: string): string | undefined => {
+        const apenasNumeros = cpf_cnpj.replace(/\D/g, '');
+        if (apenasNumeros.length > 14) {
+            return 'CPF/CNPJ não pode ter mais de 14 dígitos';
+        }
+        return undefined;
+    };
+
+    const validarDataNascimento = (data: string): string | undefined => {
+        if (!data) return undefined;
+        const dataNasc = new Date(data);
+        const hoje = new Date();
+        let idade = hoje.getFullYear() - dataNasc.getFullYear();
+        const m = hoje.getMonth() - dataNasc.getMonth();
+        if (m < 0 || (m === 0 && hoje.getDate() < dataNasc.getDate())) {
+            idade--;
+        }
+        if (idade < 18) {
+            return 'Você deve ter no mínimo 18 anos';
+        }
+        return undefined;
+    };
+
+    const validarTelefone = (telefone: string): string | undefined => {
+        const apenasNumeros = telefone.replace(/\D/g, '');
+        if (apenasNumeros.length > 11) {
+            return 'Telefone não pode ter mais de 11 dígitos (DDD + número)';
+        }
+        if (!/^\d*$/.test(apenasNumeros)) {
+            return 'Telefone deve conter apenas números';
+        }
+        return undefined;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        const novosErros: Erros = {};
+        const erroNome = validarNome(veiculo.nome);
+        const erroCpfCnpj = validarCpfCnpj(veiculo.cpf_cnpj);
+        const erroData = validarDataNascimento(veiculo.data_nascimento);
+        const erroTelefone = validarTelefone(veiculo.telefone);
+
+        if (erroNome) novosErros.nome = erroNome;
+        if (erroCpfCnpj) novosErros.cpf_cnpj = erroCpfCnpj;
+        if (erroData) novosErros.data_nascimento = erroData;
+        if (erroTelefone) novosErros.telefone = erroTelefone;
+
+        setErros(novosErros);
+
+        if (Object.keys(novosErros).length > 0) {
+            return;
+        }
+
         try {
             if (!veiculo.id) {
                 const veiculoCriado = await criaVeiculo(veiculo);
@@ -110,6 +176,7 @@ export function VeiculoForm() {
                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     placeholder="Ex: João da Silva"
                                 />
+                                {erros.nome && <p className="text-red-500 text-sm mt-1">{erros.nome}</p>}
                             </div>
 
                             <div>
@@ -124,6 +191,7 @@ export function VeiculoForm() {
                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     placeholder="(11) 99999-9999"
                                 />
+                                {erros.telefone && <p className="text-red-500 text-sm mt-1">{erros.telefone}</p>}
                             </div>
 
                             <div>
@@ -138,6 +206,7 @@ export function VeiculoForm() {
                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     placeholder="000.000.000-00 ou 00.000.000/0000-00"
                                 />
+                                {erros.cpf_cnpj && <p className="text-red-500 text-sm mt-1">{erros.cpf_cnpj}</p>}
                             </div>
 
                             <div>
@@ -152,6 +221,7 @@ export function VeiculoForm() {
                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     placeholder="DD/MM/AAAA"
                                 />
+                                {erros.data_nascimento && <p className="text-red-500 text-sm mt-1">{erros.data_nascimento}</p>}
                             </div>
 
                             <div>
@@ -311,7 +381,7 @@ export function VeiculoForm() {
                             className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2"
                         >
                             <Save className="w-5 h-5" />
-                            {false ? 'Salvar Alterações' : 'Cadastrar Carro'}
+                            {veiculo.id ? 'Salvar Alterações' : 'Cadastrar Carro'}
                         </button>
                     </div>
                 </form>
