@@ -13,6 +13,8 @@ function Footer() {
           </div>
           <p className="text-sm text-gray-300 leading-relaxed">
             Proteção completa para motoristas de aplicativo. Segurança e tranquilidade
+            </p>
+            <p className="text-sm text-gray-300 leading-relaxed mt-2">
             no seu dia a dia.
           </p>
         </div>
