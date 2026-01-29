@@ -1,5 +1,8 @@
+import type Seguro from "../seguro/Seguro";
+
 export default interface CriarVeiculoDTO {
-    nome : string;
+    id?: number;
+    nome: string;
     cpf_cnpj: string;
     data_nascimento: string;
     endereco: string;
@@ -9,4 +12,8 @@ export default interface CriarVeiculoDTO {
     modelo: string;
     ano: number;
     placa: string;
+    seguros?: Seguro[];
+    plataforma: string;
+    data_criacao?: string;
+    data_atualizacao?: string;
 }

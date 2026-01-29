@@ -12,10 +12,8 @@ function Footer() {
             <span className="text-3xl font-bold">AutoSeguro</span>
           </div>
           <p className="text-sm text-gray-300 leading-relaxed">
-           Proteção completa para motoristas de aplicativo. Segurança e tranquilidade
-           </p>
-          <p className="text-sm text-gray-300 leading-relaxed mt-0">
-           no seu dia a dia.
+            Proteção completa para motoristas de aplicativo. Segurança e tranquilidade
+            no seu dia a dia.
           </p>
         </div>
 
@@ -24,27 +22,27 @@ function Footer() {
           <ul className="space-y-2 text-sm text-gray-300">
             <Link to="/"><li className="hover:text-white cursor-pointer">Home</li></Link>
             <Link to="/sobre"><li className="hover:text-white cursor-pointer">Nossos Seguros</li></Link>
-            <Link to="/produtos"><li className="hover:text-white cursor-pointer">Carros Segurados</li></Link>
+            <Link to="/segurados"><li className="hover:text-white cursor-pointer">Carros Segurados</li></Link>
           </ul>
         </div>
-       
+
         <div>
           <h3 className="text-white font-semibold mb-3">Contato</h3>
-            <ul className="space-y-3">
-              <li className="flex items-center gap-2 text-sm">
-                <Phone className="h-4 w-4 text-blue-500" />
-                <span>(51) 4004-3030</span>
-              </li>
-              <li className="flex items-center gap-2 text-sm">
-                <Mail className="h-4 w-4 text-blue-500" />
-                <span>contato@autoseguro.com.br</span>
-              </li>
-              <li className="flex items-start gap-2 text-sm">
-                <Clock className="h-4 w-4 text-blue-500 mt-1" />
-                <span>Segunda a Sexta-feira das 8h às 18h</span>
-              </li>
-            </ul>
-           </div>
+          <ul className="space-y-3">
+            <li className="flex items-center gap-2 text-sm">
+              <Phone className="h-4 w-4 text-blue-500" />
+              <span>(51) 4004-3030</span>
+            </li>
+            <li className="flex items-center gap-2 text-sm">
+              <Mail className="h-4 w-4 text-blue-500" />
+              <span>contato@autoseguro.com.br</span>
+            </li>
+            <li className="flex items-start gap-2 text-sm">
+              <Clock className="h-4 w-4 text-blue-500 mt-1" />
+              <span>Segunda a Sexta-feira das 8h às 18h</span>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div className="border-t border-slate-800 py-4 text-center text-sm text-gray-400">

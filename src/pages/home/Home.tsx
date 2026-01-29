@@ -77,6 +77,7 @@ function Home() {
                 <div
                     className="absolute inset-0 bg-cover bg-center"
                     style={{
+                        filter: 'blur(2px) brightness(0.7)',
                         backgroundImage:
                             "url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1920&q=80')",
                     }}
@@ -99,7 +100,7 @@ function Home() {
                                 Seu carro protegido.
                             </h1>
 
-                            <p className="text-xl text-gray-100 mb-8 max-w-lg">
+                            <p className="text-xl text-white mb-8 max-w-lg">
                                 Seguro de carro acessível e confiável. Proteção completa,
                                 assistência 24h e aprovação rápida.
                             </p>
