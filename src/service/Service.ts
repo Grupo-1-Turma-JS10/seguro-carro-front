@@ -15,3 +15,17 @@ export const buscarVeiculos = async () => {
     return response.data;
 }
 
+export const buscarVeiculoPorId = async (id: number) => {
+    const response = await api.get(`/veiculo/${id}`);
+    return response.data;
+}
+
+export const editarVeiculo = async (veiculoData: CriarVeiculoDTO) => {
+    const response = await api.put(`/veiculo/`, veiculoData);
+    return response.data;
+}
+
+export const deletarVeiculo = async (id: number) => {
+    const response = await api.delete(`/veiculo/${id}`);
+    return response.data;
+}

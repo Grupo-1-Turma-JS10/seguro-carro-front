@@ -1,7 +1,7 @@
 import Footer from "./components/footer/Footer"
 import Navbar from "./components/navbar/Navbar"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import { Segurados } from "./pages/segurados/Segurados"
+import { ListaVeiculos } from "./pages/segurados/ListaVeiculos"
 import { VeiculoForm } from "./pages/segurados/VeiculoForm"
 import Home from "./pages/home/Home"
 
@@ -14,7 +14,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/segurados" element={<Segurados />} />
+          <Route path="/segurados" element={<ListaVeiculos />} />
           <Route path="/segurados/novo" element={<VeiculoForm />} />
           <Route path="/segurados/editar/:id" element={<VeiculoForm />} />
         </Routes>
