@@ -113,7 +113,8 @@ export function ListaVeiculos() {
                         </div>
                         <button
                             onClick={() => navigate('/segurados/novo')}
-                            className="bg-white text-blue-700 px-6 py-3 rounded-xl hover:bg-blue-50 transition-all font-bold shadow-lg flex items-center gap-2"
+                            className="bg-white text-blue-700 px-6 py-3 rounded-xl hover:bg-blue-50 
+                            transition-all font-bold shadow-lg flex items-center gap-2 cursor-pointer"
                         >
                             <Plus className="w-5 h-5" />
                             Cadastrar Carro

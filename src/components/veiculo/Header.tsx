@@ -9,7 +9,8 @@ export function Header({ carEdit }: { carEdit: boolean }) {
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <button
                     onClick={() => navigate('/segurados')}
-                    className="flex items-center gap-2 text-blue-100 hover:text-white mb-6 transition-colors"
+                    className="flex items-center gap-2 text-blue-100 hover:text-white mb-6 
+                    transition-colors cursor-pointer"
                 >
                     <ArrowLeft className="w-5 h-5" />
                     Voltar para lista
