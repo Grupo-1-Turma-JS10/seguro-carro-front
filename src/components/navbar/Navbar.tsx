@@ -15,7 +15,7 @@ function Navbar() {
 
         <div className='flex items-center gap-3'>
           <div className='bg-blue-600 p-2 rounded-lg text-white'>
-            <ShieldCheck />
+            <Car />
           </div>
           <Link to="/">
             <div className='flex flex-col'>
@@ -32,8 +32,8 @@ function Navbar() {
             <House size={20} />
             Home
           </Link>
-          <Link to='/temas'
-            className={`transition-colors ${isActive('/temas') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600'
+          <Link to='/seguros'
+            className={`transition-colors ${isActive('/seguros') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600'
               } flex gap-2.5`}>
             <ShieldCheck size={20} />
             Seguros
@@ -70,9 +70,9 @@ function Navbar() {
               Home
             </Link>
             <Link
-              to='/temas'
+              to='/seguros'
               onClick={fecharMenu}
-              className={`py-3 px-4 rounded-lg transition-colors ${isActive('/temas')
+              className={`py-3 px-4 rounded-lg transition-colors ${isActive('/seguros')
                 ? 'bg-blue-50 text-blue-600 font-semibold'
                 : 'text-gray-700 hover:bg-gray-50'
                 } flex gap-3 items-center`}
