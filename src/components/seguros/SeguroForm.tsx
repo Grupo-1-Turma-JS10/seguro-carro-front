@@ -7,7 +7,6 @@ import { buscarSeguroPorId, criarSeguro, editarSeguro } from '../../service/Serv
 export function SeguroForm() {
   const { id } = useParams();
   const [seguro, setSeguro] = useState<Seguro>({
-    id: 0,
     cobertura: '',
     valor: 0,
     franquia: 0,
@@ -42,9 +41,10 @@ export function SeguroForm() {
       } else {
         await editarSeguro(seguro);
       }
-      navigate('/seguros');
     } catch (error) {
       console.error('Erro ao salvar seguro:', error);
+    } finally {
+      navigate('/seguros');
     }
   }
 
@@ -72,7 +72,7 @@ export function SeguroForm() {
       <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white">
           <h2 className="text-2xl font-bold">
-            {seguro?.id ? 'Editar Plano de Seguro' : 'Cadastrar Novo Seguro'}
+            {id ? 'Editar Plano de Seguro' : 'Cadastrar Novo Seguro'}
           </h2>
           <p className="text-blue-100 opacity-80">Preencha os dados abaixo para configurar a proteção.</p>
         </div>
@@ -172,7 +172,7 @@ export function SeguroForm() {
               className="flex-1 bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-100 order-2 sm:order-1 cursor-pointer"
             >
               <Save className="w-5 h-5" />
-              {seguro?.id ? 'Atualizar Plano' : 'Cadastrar Plano'}
+              {id ? 'Atualizar Plano' : 'Cadastrar Plano'}
             </button>
 
             <button
