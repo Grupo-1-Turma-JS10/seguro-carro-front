@@ -1,9 +1,9 @@
 export default interface Seguro {
     id: number;
-    valor: string;
-    desconto: string;
+    valor: number;
     status: string;
     cobertura: string;
+    franquia: number;
     data_criacao: string;
     data_atualizacao: string;
 }
