@@ -5,15 +5,14 @@ import { Save } from 'lucide-react';
 import type CriarVeiculoDTO from '../../model/veiculo/CriarVeiculoDTO';
 import { buscarVeiculoPorId, criarVeiculo } from '../../service/Service';
 
-interface Erros {
-    nome?: string;
-    cpf_cnpj?: string;
-    data_nascimento?: string;
-    telefone?: string;
-}
-
 export function VeiculoForm() {
     const navigate = useNavigate();
+    interface Erros {
+        nome?: string;
+        cpf_cnpj?: string;
+        data_nascimento?: string;
+        telefone?: string;
+    }
     const [veiculo, setVeiculo] = useState<CriarVeiculoDTO>({
         nome: '',
         cpf_cnpj: '',
@@ -44,9 +43,9 @@ export function VeiculoForm() {
             });
     }
 
-    // Validações
+   
     const validarNome = (nome: string): string | undefined => {
-        if (!/^[a-zA-Zçãáàâäüûúôóòèéê\s]+$/.test(nome)) {
+        if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(nome) || /\d/.test(nome)) {
             return 'Nome não pode conter números ou caracteres especiais';
         }
         return undefined;
@@ -63,9 +62,14 @@ export function VeiculoForm() {
     const validarDataNascimento = (data: string): string | undefined => {
         if (!data) return undefined;
         const dataNasc = new Date(data);
-        const anoNasc = dataNasc.getFullYear();
-        if (anoNasc > 2008) {
-            return 'Você deve ter no mínimo 18 anos (nascido até 2008)';
+        const hoje = new Date();
+        let idade = hoje.getFullYear() - dataNasc.getFullYear();
+        const m = hoje.getMonth() - dataNasc.getMonth();
+        if (m < 0 || (m === 0 && hoje.getDate() < dataNasc.getDate())) {
+            idade--;
+        }
+        if (idade < 18) {
+            return 'Você deve ter no mínimo 18 anos';
         }
         return undefined;
     };
@@ -81,19 +85,11 @@ export function VeiculoForm() {
         return undefined;
     };
 
-    const criaVeiculo = async (veiculoData: CriarVeiculoDTO) => {
-        criarVeiculo(veiculoData).then(() => {
-            console.log('Veículo criado com sucesso');
-        }).catch((error) => {
-            console.error('Erro ao criar veículo:', error);
-        });
-    }
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const novosErros: Erros = {};
+        console.log('handleSubmit chamado');
+        const novosErros: any = {};
 
-        
         const erroNome = validarNome(veiculo.nome);
         const erroCpfCnpj = validarCpfCnpj(veiculo.cpf_cnpj);
         const erroData = validarDataNascimento(veiculo.data_nascimento);
@@ -105,12 +101,16 @@ export function VeiculoForm() {
         if (erroTelefone) novosErros.telefone = erroTelefone;
 
         setErros(novosErros);
+        console.log('novosErros', novosErros);
 
         if (Object.keys(novosErros).length > 0) {
-            return; 
+            console.log('Formulário com erros — abortando submit');
+            return;
         }
 
-        criaVeiculo(veiculo);
+        
+        
+        criarVeiculo(veiculo);
         navigate('/segurados');
     };
 
@@ -160,7 +160,7 @@ export function VeiculoForm() {
                                         }
                                     }}
                                     className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${erros.telefone ? 'border-red-500' : 'border-gray-300'}`}
-                                    placeholder="(11) 999999999"
+                                    placeholder="(11)999999999"
                                     maxLength={11}
                                 />
                                 {erros.telefone && <p className="text-red-500 text-sm mt-1">{erros.telefone}</p>}
