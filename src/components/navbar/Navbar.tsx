@@ -17,10 +17,12 @@ function Navbar() {
           <div className='bg-blue-600 p-2 rounded-lg text-white'>
             <ShieldCheck />
           </div>
-          <div className='flex flex-col'>
-            <span className='text-xl font-bold text-slate-900'>AutoSeguro</span>
-            <span className='text-xs text-slate-500 hidden sm:block'>Proteção para Motoristas de App</span>
-          </div>
+          <Link to="/">
+            <div className='flex flex-col'>
+              <span className='text-xl font-bold text-slate-900'>AutoSeguro</span>
+              <span className='text-xs text-slate-500 hidden sm:block'>Proteção para Motoristas de App</span>
+            </div>
+          </Link>
         </div>
 
         <nav className='hidden md:flex items-center gap-8 font-medium'>
