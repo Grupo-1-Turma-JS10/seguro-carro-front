@@ -5,6 +5,13 @@ import { Save } from 'lucide-react';
 import type CriarVeiculoDTO from '../../model/veiculo/CriarVeiculoDTO';
 import { buscarVeiculoPorId, criarVeiculo } from '../../service/Service';
 
+interface Erros {
+    nome?: string;
+    cpf_cnpj?: string;
+    data_nascimento?: string;
+    telefone?: string;
+}
+
 export function VeiculoForm() {
     const navigate = useNavigate();
     const [veiculo, setVeiculo] = useState<CriarVeiculoDTO>({
@@ -20,6 +27,7 @@ export function VeiculoForm() {
         placa: '',
         plataforma: '',
     });
+    const [erros, setErros] = useState<Erros>({});
     const { id } = useParams();
 
     useEffect(() => {
@@ -36,6 +44,43 @@ export function VeiculoForm() {
             });
     }
 
+    // Validações
+    const validarNome = (nome: string): string | undefined => {
+        if (!/^[a-zA-Zçãáàâäüûúôóòèéê\s]+$/.test(nome)) {
+            return 'Nome não pode conter números ou caracteres especiais';
+        }
+        return undefined;
+    };
+
+    const validarCpfCnpj = (cpf_cnpj: string): string | undefined => {
+        const apenasNumeros = cpf_cnpj.replace(/\D/g, '');
+        if (apenasNumeros.length > 14) {
+            return 'CPF/CNPJ não pode ter mais de 14 dígitos';
+        }
+        return undefined;
+    };
+
+    const validarDataNascimento = (data: string): string | undefined => {
+        if (!data) return undefined;
+        const dataNasc = new Date(data);
+        const anoNasc = dataNasc.getFullYear();
+        if (anoNasc > 2008) {
+            return 'Você deve ter no mínimo 18 anos (nascido até 2008)';
+        }
+        return undefined;
+    };
+
+    const validarTelefone = (telefone: string): string | undefined => {
+        const apenasNumeros = telefone.replace(/\D/g, '');
+        if (apenasNumeros.length > 11) {
+            return 'Telefone não pode ter mais de 11 dígitos (DDD + número)';
+        }
+        if (!/^\d*$/.test(apenasNumeros)) {
+            return 'Telefone deve conter apenas números';
+        }
+        return undefined;
+    };
+
     const criaVeiculo = async (veiculoData: CriarVeiculoDTO) => {
         criarVeiculo(veiculoData).then(() => {
             console.log('Veículo criado com sucesso');
@@ -46,6 +91,25 @@ export function VeiculoForm() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        const novosErros: Erros = {};
+
+        
+        const erroNome = validarNome(veiculo.nome);
+        const erroCpfCnpj = validarCpfCnpj(veiculo.cpf_cnpj);
+        const erroData = validarDataNascimento(veiculo.data_nascimento);
+        const erroTelefone = validarTelefone(veiculo.telefone);
+
+        if (erroNome) novosErros.nome = erroNome;
+        if (erroCpfCnpj) novosErros.cpf_cnpj = erroCpfCnpj;
+        if (erroData) novosErros.data_nascimento = erroData;
+        if (erroTelefone) novosErros.telefone = erroTelefone;
+
+        setErros(novosErros);
+
+        if (Object.keys(novosErros).length > 0) {
+            return; 
+        }
+
         criaVeiculo(veiculo);
         navigate('/segurados');
     };
@@ -70,10 +134,14 @@ export function VeiculoForm() {
                                     type="text"
                                     required
                                     value={veiculo.nome}
-                                    onChange={(e) => setVeiculo({ ...veiculo, nome: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                    onChange={(e) => {
+                                        setVeiculo({ ...veiculo, nome: e.target.value });
+                                        setErros({ ...erros, nome: undefined });
+                                    }}
+                                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${erros.nome ? 'border-red-500' : 'border-gray-300'}`}
                                     placeholder="Ex: João da Silva"
                                 />
+                                {erros.nome && <p className="text-red-500 text-sm mt-1">{erros.nome}</p>}
                             </div>
 
                             <div>
@@ -84,10 +152,18 @@ export function VeiculoForm() {
                                     type="tel"
                                     required
                                     value={veiculo.telefone}
-                                    onChange={(e) => setVeiculo({ ...veiculo, telefone: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                    placeholder="(11) 99999-9999"
+                                    onChange={(e) => {
+                                        const novoTelefone = e.target.value.replace(/\D/g, '');
+                                        if (novoTelefone.length <= 11) {
+                                            setVeiculo({ ...veiculo, telefone: novoTelefone });
+                                            setErros({ ...erros, telefone: undefined });
+                                        }
+                                    }}
+                                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${erros.telefone ? 'border-red-500' : 'border-gray-300'}`}
+                                    placeholder="(11) 999999999"
+                                    maxLength={11}
                                 />
+                                {erros.telefone && <p className="text-red-500 text-sm mt-1">{erros.telefone}</p>}
                             </div>
 
                             <div>
@@ -98,10 +174,18 @@ export function VeiculoForm() {
                                     type="text"
                                     required
                                     value={veiculo.cpf_cnpj}
-                                    onChange={(e) => setVeiculo({ ...veiculo, cpf_cnpj: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                    onChange={(e) => {
+                                        const novoValor = e.target.value;
+                                        const apenasNumeros = novoValor.replace(/\D/g, '');
+                                        if (apenasNumeros.length <= 14) {
+                                            setVeiculo({ ...veiculo, cpf_cnpj: novoValor });
+                                            setErros({ ...erros, cpf_cnpj: undefined });
+                                        }
+                                    }}
+                                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${erros.cpf_cnpj ? 'border-red-500' : 'border-gray-300'}`}
                                     placeholder="000.000.000-00 ou 00.000.000/0000-00"
                                 />
+                                {erros.cpf_cnpj && <p className="text-red-500 text-sm mt-1">{erros.cpf_cnpj}</p>}
                             </div>
 
                             <div>
@@ -112,10 +196,14 @@ export function VeiculoForm() {
                                     type="date"
                                     required
                                     value={veiculo.data_nascimento}
-                                    onChange={(e) => setVeiculo({ ...veiculo, data_nascimento: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                    onChange={(e) => {
+                                        setVeiculo({ ...veiculo, data_nascimento: e.target.value });
+                                        setErros({ ...erros, data_nascimento: undefined });
+                                    }}
+                                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${erros.data_nascimento ? 'border-red-500' : 'border-gray-300'}`}
                                     placeholder="DD/MM/AAAA"
                                 />
+                                {erros.data_nascimento && <p className="text-red-500 text-sm mt-1">{erros.data_nascimento}</p>}
                             </div>
 
                             <div>
