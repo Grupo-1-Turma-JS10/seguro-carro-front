@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { ListaVeiculos } from "./pages/segurados/ListaVeiculos"
 import { VeiculoForm } from "./pages/segurados/VeiculoForm"
 import Home from "./pages/home/Home"
+import ScrollNoTopo from "./utils/ScrollNoTopo"
 
 function App() {
   const BASE_URL =  "/seguro-carro-front";
@@ -11,6 +12,7 @@ function App() {
   return (
     <>
       <BrowserRouter basename={BASE_URL}>
+      <ScrollNoTopo />
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
