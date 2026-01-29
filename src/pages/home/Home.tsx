@@ -111,9 +111,6 @@ function Home() {
                                     <ArrowRight className="w-4 h-4" />
                                 </button>
 
-                                <button className="inline-flex items-center justify-center bg-white/90 text-blue-600 px-7 py-3 rounded-full hover:bg-white transition shadow-lg font-semibold">
-                                    Saiba Mais
-                                </button>
                             </div>
 
                             <div className="flex flex-col sm:flex-row gap-6 pt-8 mt-8 border-t border-white/20">

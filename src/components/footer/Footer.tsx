@@ -1,4 +1,4 @@
-import { Shield, Phone, Mail, Clock } from 'lucide-react';
+import { Shield, Phone, Mail, Clock, Car } from 'lucide-react';
 import { Link } from 'react-router';
 
 function Footer() {
@@ -8,7 +8,7 @@ function Footer() {
 
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <Shield className="h-8 w-8 text-blue-500" />
+            <Car className="h-8 w-8 text-blue-500" />
             <span className="text-3xl font-bold">AutoSeguro</span>
           </div>
           <p className="text-sm text-gray-300 leading-relaxed">
@@ -21,7 +21,7 @@ function Footer() {
           <h3 className="font-semibold text-lg mb-3">Links Rápidos</h3>
           <ul className="space-y-2 text-sm text-gray-300">
             <Link to="/"><li className="hover:text-white cursor-pointer">Home</li></Link>
-            <Link to="/sobre"><li className="hover:text-white cursor-pointer">Nossos Seguros</li></Link>
+            <Link to="/seguros"><li className="hover:text-white cursor-pointer">Nossos Seguros</li></Link>
             <Link to="/segurados"><li className="hover:text-white cursor-pointer">Carros Segurados</li></Link>
           </ul>
         </div>
