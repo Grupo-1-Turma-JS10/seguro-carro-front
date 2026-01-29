@@ -7,8 +7,12 @@ import { buscarSeguros, buscarVeiculoPorId, contratarSeguro, criarVeiculo } from
 
 export function VeiculoForm() {
     const navigate = useNavigate();
-    const [seguroSelecionado, setSeguroSelecionado] = useState<string>('');
-    const [seguros, setSeguros] = useState([]);
+    interface Erros {
+        nome?: string;
+        cpf_cnpj?: string;
+        data_nascimento?: string;
+        telefone?: string;
+    }
     const [veiculo, setVeiculo] = useState<CriarVeiculoDTO>({
         nome: '',
         cpf_cnpj: '',
@@ -24,6 +28,7 @@ export function VeiculoForm() {
         valor_final_total: 0,
         desconto: 0,
     });
+    const [erros, setErros] = useState<Erros>({});
     const { id } = useParams();
 
     useEffect(() => {
@@ -44,42 +49,75 @@ export function VeiculoForm() {
             });
     }
 
-    const criaVeiculo = async (veiculoData: CriarVeiculoDTO): Promise<CriarVeiculoDTO> => {
-        return criarVeiculo(veiculoData).then((data) => {
-            return data;
-        }).catch((error) => {
-            console.error('Erro ao criar veículo:', error);
-            throw error;
-        });
-    }
+   
+    const validarNome = (nome: string): string | undefined => {
+        if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(nome) || /\d/.test(nome)) {
+            return 'Nome não pode conter números ou caracteres especiais';
+        }
+        return undefined;
+    };
 
-    const buscaSeguros = async () => {
-        buscarSeguros().then(data => {
-            setSeguros(data);
-        }).catch((error) => {
-            console.error('Erro ao buscar seguros:', error);
-        });
-    }
+    const validarCpfCnpj = (cpf_cnpj: string): string | undefined => {
+        const apenasNumeros = cpf_cnpj.replace(/\D/g, '');
+        if (apenasNumeros.length > 14) {
+            return 'CPF/CNPJ não pode ter mais de 14 dígitos';
+        }
+        return undefined;
+    };
 
-    const vincularSeguroAoVeiculo = async (seguroId: number, veiculoId: number) => {
-        return contratarSeguro(seguroId, veiculoId).then(() => {
-        }).catch((error) => {
-            console.error('Erro ao vincular seguro ao veículo:', error);
-        });
-    }
+    const validarDataNascimento = (data: string): string | undefined => {
+        if (!data) return undefined;
+        const dataNasc = new Date(data);
+        const hoje = new Date();
+        let idade = hoje.getFullYear() - dataNasc.getFullYear();
+        const m = hoje.getMonth() - dataNasc.getMonth();
+        if (m < 0 || (m === 0 && hoje.getDate() < dataNasc.getDate())) {
+            idade--;
+        }
+        if (idade < 18) {
+            return 'Você deve ter no mínimo 18 anos';
+        }
+        return undefined;
+    };
+
+    const validarTelefone = (telefone: string): string | undefined => {
+        const apenasNumeros = telefone.replace(/\D/g, '');
+        if (apenasNumeros.length > 11) {
+            return 'Telefone não pode ter mais de 11 dígitos (DDD + número)';
+        }
+        if (!/^\d*$/.test(apenasNumeros)) {
+            return 'Telefone deve conter apenas números';
+        }
+        return undefined;
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        try {
-            const veiculoCriado = await criaVeiculo(veiculo);
-            if (seguroSelecionado && veiculoCriado?.id) {
-                await vincularSeguroAoVeiculo(Number(seguroSelecionado), veiculoCriado.id);
-            }
-        } catch (error) {
-            console.error('Erro ao criar veículo:', error);
-        } finally {
-            navigate('/segurados');
+        console.log('handleSubmit chamado');
+        const novosErros: any = {};
+
+        const erroNome = validarNome(veiculo.nome);
+        const erroCpfCnpj = validarCpfCnpj(veiculo.cpf_cnpj);
+        const erroData = validarDataNascimento(veiculo.data_nascimento);
+        const erroTelefone = validarTelefone(veiculo.telefone);
+
+        if (erroNome) novosErros.nome = erroNome;
+        if (erroCpfCnpj) novosErros.cpf_cnpj = erroCpfCnpj;
+        if (erroData) novosErros.data_nascimento = erroData;
+        if (erroTelefone) novosErros.telefone = erroTelefone;
+
+        setErros(novosErros);
+        console.log('novosErros', novosErros);
+
+        if (Object.keys(novosErros).length > 0) {
+            console.log('Formulário com erros — abortando submit');
+            return;
         }
+
+        
+        
+        criarVeiculo(veiculo);
+        navigate('/segurados');
     };
 
     return (
@@ -102,10 +140,14 @@ export function VeiculoForm() {
                                     type="text"
                                     required
                                     value={veiculo.nome}
-                                    onChange={(e) => setVeiculo({ ...veiculo, nome: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                    onChange={(e) => {
+                                        setVeiculo({ ...veiculo, nome: e.target.value });
+                                        setErros({ ...erros, nome: undefined });
+                                    }}
+                                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${erros.nome ? 'border-red-500' : 'border-gray-300'}`}
                                     placeholder="Ex: João da Silva"
                                 />
+                                {erros.nome && <p className="text-red-500 text-sm mt-1">{erros.nome}</p>}
                             </div>
 
                             <div>
@@ -116,10 +158,18 @@ export function VeiculoForm() {
                                     type="tel"
                                     required
                                     value={veiculo.telefone}
-                                    onChange={(e) => setVeiculo({ ...veiculo, telefone: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                    placeholder="(11) 99999-9999"
+                                    onChange={(e) => {
+                                        const novoTelefone = e.target.value.replace(/\D/g, '');
+                                        if (novoTelefone.length <= 11) {
+                                            setVeiculo({ ...veiculo, telefone: novoTelefone });
+                                            setErros({ ...erros, telefone: undefined });
+                                        }
+                                    }}
+                                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${erros.telefone ? 'border-red-500' : 'border-gray-300'}`}
+                                    placeholder="(11)999999999"
+                                    maxLength={11}
                                 />
+                                {erros.telefone && <p className="text-red-500 text-sm mt-1">{erros.telefone}</p>}
                             </div>
 
                             <div>
@@ -130,10 +180,18 @@ export function VeiculoForm() {
                                     type="text"
                                     required
                                     value={veiculo.cpf_cnpj}
-                                    onChange={(e) => setVeiculo({ ...veiculo, cpf_cnpj: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                    onChange={(e) => {
+                                        const novoValor = e.target.value;
+                                        const apenasNumeros = novoValor.replace(/\D/g, '');
+                                        if (apenasNumeros.length <= 14) {
+                                            setVeiculo({ ...veiculo, cpf_cnpj: novoValor });
+                                            setErros({ ...erros, cpf_cnpj: undefined });
+                                        }
+                                    }}
+                                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${erros.cpf_cnpj ? 'border-red-500' : 'border-gray-300'}`}
                                     placeholder="000.000.000-00 ou 00.000.000/0000-00"
                                 />
+                                {erros.cpf_cnpj && <p className="text-red-500 text-sm mt-1">{erros.cpf_cnpj}</p>}
                             </div>
 
                             <div>
@@ -144,10 +202,14 @@ export function VeiculoForm() {
                                     type="date"
                                     required
                                     value={veiculo.data_nascimento}
-                                    onChange={(e) => setVeiculo({ ...veiculo, data_nascimento: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                    onChange={(e) => {
+                                        setVeiculo({ ...veiculo, data_nascimento: e.target.value });
+                                        setErros({ ...erros, data_nascimento: undefined });
+                                    }}
+                                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${erros.data_nascimento ? 'border-red-500' : 'border-gray-300'}`}
                                     placeholder="DD/MM/AAAA"
                                 />
+                                {erros.data_nascimento && <p className="text-red-500 text-sm mt-1">{erros.data_nascimento}</p>}
                             </div>
 
                             <div>
