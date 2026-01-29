@@ -1,29 +1,24 @@
-import { useState } from 'react';
 import { SeguroList } from '../../components/seguros/SeguroList';
-import { SeguroForm } from '../../components/seguros/SeguroForm';
 import type Seguro from '../../model/seguro/Seguro';
-
-type Tela = 'lista' | 'formulario';
+import { useNavigate } from 'react-router-dom';
 
 export default function Seguros() {
-  const [telaAtiva, setTelaAtiva] = useState<Tela>('lista');
-  const [seguroSendoEditado, setSeguroSendoEditado] = useState<Seguro | null>(null);
+  const navigate = useNavigate();
 
   const abrirFormulario = (seguro?: Seguro) => {
-    setSeguroSendoEditado(seguro || null);
-    setTelaAtiva('formulario');
+    if (seguro?.id) {
+      navigate(`/seguros/editar/${seguro.id}`);
+    } else {
+      navigate('/seguros/novo');
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {telaAtiva === 'lista' ? (
-        <SeguroList 
-          onEdit={abrirFormulario} 
-          onAddNew={() => abrirFormulario()} 
-        />
-      ) : (
-        <SeguroForm />
-      )}
+      <SeguroList 
+        onEdit={abrirFormulario} 
+        onAddNew={() => navigate('/seguros/novo')} 
+      />
     </div>
   );
 }

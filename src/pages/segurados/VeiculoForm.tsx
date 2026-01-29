@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { Header } from '../../components/veiculo/Header';
 import { useEffect, useState } from 'react';
-import { Save } from 'lucide-react';
+import { Save, CheckCircle, X, BadgePercent } from 'lucide-react';
 import type CriarVeiculoDTO from '../../model/veiculo/CriarVeiculoDTO';
 import { buscarSeguros, buscarVeiculoPorId, contratarSeguro, criarVeiculo, editarVeiculo } from '../../service/Service';
 
@@ -16,6 +16,10 @@ export function VeiculoForm() {
         telefone?: string;
     }
     const [erros, setErros] = useState<Erros>({});
+    const [modalSucesso, setModalSucesso] = useState<{ aberto: boolean; veiculoCriado: CriarVeiculoDTO | null }>({
+        aberto: false,
+        veiculoCriado: null
+    });
     const [veiculo, setVeiculo] = useState<CriarVeiculoDTO>({
         nome: '',
         cpf_cnpj: '',
@@ -72,6 +76,7 @@ export function VeiculoForm() {
         return contratarSeguro(seguroId, veiculoId).then(() => {
         }).catch((error) => {
             console.error('Erro ao vincular seguro ao veículo:', error);
+            throw error;
         });
     }
 
@@ -139,16 +144,22 @@ export function VeiculoForm() {
         try {
             if (!veiculo.id) {
                 const veiculoCriado = await criaVeiculo(veiculo);
+                let veiculoFinal = veiculoCriado;
                 if (seguroSelecionado && veiculoCriado?.id) {
                     await vincularSeguroAoVeiculo(Number(seguroSelecionado), veiculoCriado.id);
+                    // Busca o veículo atualizado com o desconto calculado
+                    const veiculoAtualizado = await buscarVeiculoPorId(veiculoCriado.id);
+                    if (veiculoAtualizado) {
+                        veiculoFinal = veiculoAtualizado;
+                    }
                 }
+                setModalSucesso({ aberto: true, veiculoCriado: veiculoFinal });
             } else {
                 await editarVeiculo(veiculo);
+                navigate('/segurados');
             }
         } catch (error) {
             console.error('Erro ao criar veículo:', error);
-        } finally {
-            navigate('/segurados');
         }
     };
 
@@ -386,6 +397,62 @@ export function VeiculoForm() {
                     </div>
                 </form>
             </section>
+
+            {/* Modal de Sucesso -- passar para components depois*/}
+            {modalSucesso.aberto && modalSucesso.veiculoCriado && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+        
+                    <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden animate-in fade-in zoom-in duration-200">
+                        <div className="bg-green-50 px-6 py-6 text-center">
+                            <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <CheckCircle className="w-8 h-8 text-green-600" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900">Veículo Cadastrado!</h3>
+                            <p className="text-gray-600 mt-1">O veículo foi adicionado com sucesso.</p>
+                        </div>
+                        
+                        <div className="px-6 py-5">
+                            <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+                                <p className="font-bold text-gray-900 text-lg">
+                                    {modalSucesso.veiculoCriado.marca} {modalSucesso.veiculoCriado.modelo}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                    <span className="font-medium">Placa:</span> <span className="font-mono">{modalSucesso.veiculoCriado.placa}</span>
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                    <span className="font-medium">Motorista:</span> {modalSucesso.veiculoCriado.nome}
+                                </p>
+                            </div>
+
+                            {modalSucesso.veiculoCriado.desconto && modalSucesso.veiculoCriado.desconto > 0 && (
+                                <div className="mt-4 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-4 text-white">
+                                    <div className="flex items-center gap-3">
+                                        <div className="bg-white/20 p-2 rounded-lg">
+                                            <BadgePercent className="w-6 h-6" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium text-green-100">Parabéns! Você ganhou</p>
+                                            <p className="text-2xl font-bold">
+                                                R$ {modalSucesso.veiculoCriado.desconto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} de desconto
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        
+                        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                            <button
+                                onClick={() => navigate('/segurados')}
+                                className="w-full px-4 py-3 rounded-xl font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                            >
+                                Ver Lista de Veículos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
