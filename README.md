@@ -1,73 +1,58 @@
-# React + TypeScript + Vite
+# 🚗 Seguro Carro — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend do projeto **Seguro Carro**, uma aplicação web para cotação, contratação e gerenciamento de seguros automotivos.  
+Foco em **performance**, **acessibilidade** e **DX** (Developer Experience).
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Principais Funcionalidades
 
-## React Compiler
+- Cotação de seguro por dados do veículo e perfil do condutor
+- Simulação de planos e coberturas
+- Carrinho/checkout com resumo da apólice
+- Área autenticada: apólices, boletos/faturas e sinistros
+- Painel administrativo (opcional)
+- **Acessibilidade** (WAI-ARIA) e **design responsivo**
+- Integração com API backend (`/api/*`)
+<!-- Ajuste a lista conforme o seu escopo real -->
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🧱 Stack Técnica
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+<!-- Ajuste conforme o seu projeto -->
+- **Framework:** React (Vite) / Next.js
+- **Linguagem:** TypeScript
+- **Estilização:** Tailwind CSS 
+- **State Management:** React Query / Redux Toolkit / Context API
+- **Formulários:** React Hook Form + Zod/Yup
+- **HTTP Client:** fetch/axios
+- **Qualidade:** ESLint + Prettier + Husky (pre-commit)
+- **CI/CD:** GitHub Actions
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 📂 Estrutura de Pastas
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+```text
+seguro-carro-front/
+├─ public/                 # assets estáticos
+├─ src/
+│  ├─ assets/              # imagens, ícones
+│  ├─ components/          # componentes reutilizáveis
+│  ├─ features/            # domínios (ex.: quote, policy, auth)
+│  ├─ hooks/               # hooks customizados
+│  ├─ layouts/             # layouts de páginas
+│  ├─ pages/ or app/       # roteamento (React Router ou Next.js app/)
+│  ├─ services/            # chamadas à API, clients
+│  ├─ store/               # estado global (se aplicável)
+│  ├─ styles/              # estilos globais / tailwind.css
+│  ├─ utils/               # helpers utilitários
+│  ├─ main.tsx / index.tsx # entry point
+│  └─ vite-env.d.ts        # tipos Vite (se Vite)
+├─ .env.example
+├─ package.json
+├─ tsconfig.json
+├─ README.md
+└─ ... (eslint, prettier, configs)
+``
