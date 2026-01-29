@@ -104,15 +104,7 @@ function Home() {
                                 Seguro de carro acessível e confiável. Proteção completa,
                                 assistência 24h e aprovação rápida.
                             </p>
-
-                            <div className="flex flex-col sm:flex-row gap-4">
-                                <button className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-7 py-3 rounded-full hover:bg-blue-700 transition shadow-lg font-semibold">
-                                    Solicitar Cotação
-                                    <ArrowRight className="w-4 h-4" />
-                                </button>
-
-                            </div>
-
+                  
                             <div className="flex flex-col sm:flex-row gap-6 pt-8 mt-8 border-t border-white/20">
                                 {[
                                     "Aprovação em 24h",
@@ -194,7 +186,12 @@ function Home() {
                     </div>
                 </div>
             </section>
-
+<section className="py-20 bg-blue-600 text-white text-center">
+                <h2 className="text-4xl font-bold mb-6">
+                    Estamos prontos para proteger seu carro e sua renda
+                </h2>
+                
+            </section>
 
             <section className="py-20 md:py-32 bg-white">
                 <div className="max-w-7xl mx-auto px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -235,18 +232,7 @@ function Home() {
             </section>
 
 
-            <section className="py-20 bg-blue-600 text-white text-center">
-                <h2 className="text-4xl font-bold mb-6">
-                    Pronto para proteger seu carro?
-                </h2>
-                <button
-                    onClick={handleUnavailable}
-                    className="inline-flex items-center justify-center gap-2 bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition shadow-lg"
-                >
-                    Solicitar Cotação
-                    <ArrowRight className="w-4 h-4" />
-                </button>
-            </section>
+            
 
 
             <section className="w-full bg-gradient-to-b from-slate-900 to-slate-950 py-20">
@@ -333,12 +319,12 @@ function Home() {
                             sua renda
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                            <button className="inline-flex items-center gap-3 bg-white text-orange-600 px-10 py-4 rounded-full font-semibold text-lg shadow-lg hover:bg-orange-50 transition">
+                            <button 
+                            onClick={()=> alert("Funcionalidade não implentada ainda.")}
+                            className="inline-flex items-center gap-3 bg-white text-orange-600 px-10 py-4 rounded-full font-semibold text-lg shadow-lg hover:bg-orange-50 transition">
                                 <Shield className="w-5 h-5" />
                                 Fazer Cotação Grátis
-                            </button>
-                            <button className="bg-orange-700 text-white px-10 py-4 rounded-full font-semibold text-lg shadow-lg hover:bg-orange-800 transition">
-                                Ver Carros Segurados
+                                
                             </button>
                         </div>
                     </div>
