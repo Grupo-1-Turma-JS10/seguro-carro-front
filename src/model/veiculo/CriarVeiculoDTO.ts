@@ -14,6 +14,8 @@ export default interface CriarVeiculoDTO {
     placa: string;
     seguros?: Seguro[];
     plataforma: string;
+    valor_final_total: number;
+    desconto: number;
     data_criacao?: string;
     data_atualizacao?: string;
 }
