@@ -66,23 +66,26 @@ export function SeguroList({ onEdit, onAddNew }: SeguroListProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {planos.map(plano => (
               <div key={plano.id} className="bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden">
-                <div className="p-6 md:p-8 pb-4 flex justify-between items-center">
-                  <h3 className="text-xl font-bold text-gray-900">{plano.name}</h3>
+                
+                <div className="bg-blue-600 p-6 md:p-8 flex justify-between items-center">
+                  <h3 className="text-xl font-bold text-white">{plano.name}</h3>
                   <div className="flex gap-2">
-                    <button onClick={() => onEdit(plano)} className="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 active:scale-90 rounded-xl transition-all cursor-pointer">
+                    <button 
+                      onClick={() => onEdit(plano)} 
+                      className="p-2.5 text-white/80 hover:text-white hover:bg-white/20 active:scale-90 rounded-xl transition-all cursor-pointer"
+                    >
                       <Edit2 className="w-4 h-4" />
                     </button>
-                    {/* Botão de Excluir que abre o alerta */}
                     <button 
                       onClick={() => setSeguroParaExcluir(plano)} 
-                      className="p-2.5 text-gray-400 hover:text-red-600 hover:bg-red-50 active:scale-90 rounded-xl transition-all cursor-pointer"
+                      className="p-2.5 text-white/80 hover:text-red-200 hover:bg-red-500/20 active:scale-90 rounded-xl transition-all cursor-pointer"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
 
-                <div className="px-6 md:px-8 mb-6">
+                <div className="px-6 md:px-8 mt-6 mb-6">
                   <h3 className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">A partir de</h3>
                   <div className="flex items-baseline">
                     <span className="text-3xl md:text-4xl font-black text-blue-600">R$ {plano.monthlyPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
@@ -107,7 +110,7 @@ export function SeguroList({ onEdit, onAddNew }: SeguroListProps) {
             ))}
           </div>
         ) : (
-          /* Conteúdo da página caso não tenha nenhum plano cadastrado */
+          /* Conteúdo caso a página de listagem não tenha nenhum plano cadastrado */
           <div className="flex-grow flex items-center justify-center py-20">
             <div className="bg-white p-8 md:p-12 rounded-[40px] border border-gray-100 shadow-xl shadow-gray-200/50 max-w-md w-full text-center">
               <div className="bg-blue-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
@@ -123,7 +126,7 @@ export function SeguroList({ onEdit, onAddNew }: SeguroListProps) {
         )}
       </div>
 
-      {/* --- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO --- */}
+      {/* --- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO DO PLANO --- */}
       {seguroParaExcluir && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-md rounded-[32px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
@@ -155,7 +158,7 @@ export function SeguroList({ onEdit, onAddNew }: SeguroListProps) {
         </div>
       )}
 
-      {/* Modal de Detalhes */}
+      {/* Modal de Detalhes do Plano */}
       {selectedSeguro && (
         <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center bg-black/60 backdrop-blur-sm p-0 md:p-4 cursor-pointer" onClick={() => setSelectedSeguro(null)}>
           <div className="bg-white w-full max-w-2xl rounded-t-[32px] md:rounded-[32px] shadow-2xl overflow-hidden animate-in slide-in-from-bottom md:zoom-in-95 duration-300 cursor-default flex flex-col max-h-[95vh]" onClick={e => e.stopPropagation()}>
@@ -172,7 +175,6 @@ export function SeguroList({ onEdit, onAddNew }: SeguroListProps) {
               </div>
             </div>
 
-            {/* Conteúdo da Modal de Detalhes */}
             <div className="p-6 md:p-8 overflow-y-auto">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                 <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center gap-4">
