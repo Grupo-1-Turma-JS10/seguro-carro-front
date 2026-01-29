@@ -3,7 +3,7 @@ import { Header } from '../../components/veiculo/Header';
 import { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
 import type CriarVeiculoDTO from '../../model/veiculo/CriarVeiculoDTO';
-import { buscarSeguros, buscarVeiculoPorId, contratarSeguro, criarVeiculo } from '../../service/Service';
+import { buscarSeguros, buscarVeiculoPorId, contratarSeguro, criarVeiculo, editarVeiculo } from '../../service/Service';
 
 export function VeiculoForm() {
     const navigate = useNavigate();
@@ -71,9 +71,13 @@ export function VeiculoForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const veiculoCriado = await criaVeiculo(veiculo);
-            if (seguroSelecionado && veiculoCriado?.id) {
-                await vincularSeguroAoVeiculo(Number(seguroSelecionado), veiculoCriado.id);
+            if (!veiculo.id) {
+                const veiculoCriado = await criaVeiculo(veiculo);
+                if (seguroSelecionado && veiculoCriado?.id) {
+                    await vincularSeguroAoVeiculo(Number(seguroSelecionado), veiculoCriado.id);
+                }
+            } else {
+                await editarVeiculo(veiculo);
             }
         } catch (error) {
             console.error('Erro ao criar veículo:', error);
@@ -272,7 +276,7 @@ export function VeiculoForm() {
                         <h2 className="text-2xl font-bold text-gray-900 border-b pb-3">
                             Informações do Seguro
                         </h2>
-                        
+
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Seguros *

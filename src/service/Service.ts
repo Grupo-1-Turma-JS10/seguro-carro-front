@@ -1,5 +1,7 @@
 import axios from "axios";
 import type CriarVeiculoDTO from "../model/veiculo/CriarVeiculoDTO";
+import type Seguro from "../model/seguro/Seguro";
+import type CriarSeguroDTO from "../model/seguro/CriarSeguroDTO";
 
 const api = axios.create({
     baseURL:`http://localhost:4000`
@@ -30,6 +32,11 @@ export const deletarVeiculo = async (id: number) => {
     return response.data;
 }
 
+export const criarSeguro = async (seguroData: CriarSeguroDTO) => {
+    const response = await api.post('/seguro', seguroData);
+    return response.data;
+}
+
 export const buscarSeguros = async () => {
     const response = await api.get('/seguro');
     return response.data;
@@ -42,6 +49,11 @@ export const buscarSeguroPorId = async (id: number) => {
 
 export const contratarSeguro = async (seguroId: number, veiculoId: number) => {
     const response = await api.post(`/seguro/${seguroId}/veiculo/${veiculoId}`);
+    return response.data;
+}
+
+export const editarSeguro = async (seguroData: Seguro) => {
+    const response = await api.put('/seguro', seguroData);
     return response.data;
 }
 

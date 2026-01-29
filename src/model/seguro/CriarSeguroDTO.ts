@@ -1,8 +1,6 @@
 export default interface CriarSeguroDTO {
+    valor: number;
+    status: string;
     cobertura: string;
-    veiculo: VeiculoDTO;
-}
-
-interface VeiculoDTO {
-    id: number;
+    franquia: number;
 }
