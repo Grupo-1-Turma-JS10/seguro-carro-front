@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { Segurados } from "./pages/segurados/Segurados"
 import { VeiculoForm } from "./pages/segurados/VeiculoForm"
 import Home from "./pages/home/Home"
+import Seguros from "./pages/seguros/Seguros"
 
 function App() {
   const BASE_URL =  "/seguro-carro-front";
@@ -14,6 +15,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/seguros" element={<Seguros />} />
           <Route path="/segurados" element={<Segurados />} />
           <Route path="/segurados/novo" element={<VeiculoForm />} />
           <Route path="/segurados/editar/:id" element={<VeiculoForm />} />
