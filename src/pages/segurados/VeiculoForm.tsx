@@ -1,15 +1,41 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Header } from '../../components/veiculo/Header';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
 import type CriarVeiculoDTO from '../../model/veiculo/CriarVeiculoDTO';
-import { criarVeiculo } from '../../service/Service';
+import { buscarVeiculoPorId, criarVeiculo } from '../../service/Service';
 
 export function VeiculoForm() {
     const navigate = useNavigate();
-    const [veiculo, setVeiculo] = useState<CriarVeiculoDTO>({} as CriarVeiculoDTO);
+    const [veiculo, setVeiculo] = useState<CriarVeiculoDTO>({
+        nome: '',
+        cpf_cnpj: '',
+        data_nascimento: '',
+        endereco: '',
+        email: '',
+        telefone: '',
+        marca: '',
+        modelo: '',
+        ano: 0,
+        placa: '',
+        plataforma: '',
+    });
+    const { id } = useParams();
 
-    
+    useEffect(() => {
+        if (id) {
+            buscaVeiculoPorId(Number(id));
+        }
+    }, [id]);
+
+    const buscaVeiculoPorId = async (id: number) => {
+        buscarVeiculoPorId(id)
+            .then(data => setVeiculo(data)
+            ).catch((error) => {
+                console.error('Erro ao buscar veículo:', error);
+            });
+    }
+
     const criaVeiculo = async (veiculoData: CriarVeiculoDTO) => {
         criarVeiculo(veiculoData).then(() => {
             console.log('Veículo criado com sucesso');
@@ -21,20 +47,15 @@ export function VeiculoForm() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         criaVeiculo(veiculo);
-
-        alert('Carro salvo com sucesso!');
         navigate('/segurados');
     };
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <Header carEdit={false} />
+            <Header carEdit={veiculo.id !== undefined} />
 
-
-            {/* Form */}
             <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-8 space-y-8">
-                    {/* Driver Info */}
                     <div className="space-y-6">
                         <h2 className="text-2xl font-bold text-gray-900 border-b pb-3">
                             Informações do Motorista
@@ -110,7 +131,7 @@ export function VeiculoForm() {
                                     placeholder="exemplo@email.com"
                                 />
                             </div>
-                            
+
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Endereço *
@@ -126,23 +147,24 @@ export function VeiculoForm() {
                             </div>
                         </div>
 
-                       {/*  <div>
+                        <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Plataforma de Trabalho *
                             </label>
                             <select
                                 required
-                                value={veiculo.plataforma_trabalho}
-                                onChange={(e) => setVeiculo({ ...veiculo, plataforma_trabalho: e.target.value })}
+                                value={veiculo.plataforma}
+                                onChange={(e) => setVeiculo({ ...veiculo, plataforma: e.target.value })}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                             >
+                                <option value="" disabled>Selecione a plataforma</option>
                                 <option value="uber">Uber</option>
-                                <option value="99">99</option>
+                                <option value="novenove">99</option>
                                 <option value="indriver">InDriver</option>
                                 <option value="other">Outra</option>
                             </select>
-                        </div>*/}
-                    </div> 
+                        </div>
+                    </div>
 
                     <div className="space-y-6">
                         <h2 className="text-2xl font-bold text-gray-900 border-b pb-3">
