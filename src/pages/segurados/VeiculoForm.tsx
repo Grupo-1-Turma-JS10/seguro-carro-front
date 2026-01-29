@@ -3,7 +3,7 @@ import { Header } from '../../components/veiculo/Header';
 import { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
 import type CriarVeiculoDTO from '../../model/veiculo/CriarVeiculoDTO';
-import { buscarVeiculoPorId, criarVeiculo } from '../../service/Service';
+import { buscarSeguros, buscarVeiculoPorId, contratarSeguro, criarVeiculo } from '../../service/Service';
 
 export function VeiculoForm() {
     const navigate = useNavigate();
@@ -25,9 +25,15 @@ export function VeiculoForm() {
         ano: 0,
         placa: '',
         plataforma: '',
+        valor_final_total: 0,
+        desconto: 0,
     });
     const [erros, setErros] = useState<Erros>({});
     const { id } = useParams();
+
+    useEffect(() => {
+        buscaSeguros();
+    }, []);
 
     useEffect(() => {
         if (id) {
@@ -85,7 +91,7 @@ export function VeiculoForm() {
         return undefined;
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log('handleSubmit chamado');
         const novosErros: any = {};
@@ -304,21 +310,7 @@ export function VeiculoForm() {
                                 />
                             </div>
 
-                            {/*<div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Cor *
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={veiculo.cor}
-                                    onChange={(e) => setVeiculo({ ...veiculo, cor: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                    placeholder="Ex: Prata, Branco, Preto"
-                                />
-                            </div>*/}
-
-                            <div className="md:col-span-2">
+                            <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Placa *
                                 </label>
@@ -336,6 +328,32 @@ export function VeiculoForm() {
                                 </p>
                             </div>
                         </div>
+                    </div>
+
+                    <div className="space-y-6">
+                        <h2 className="text-2xl font-bold text-gray-900 border-b pb-3">
+                            Informações do Seguro
+                        </h2>
+                        
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Seguros *
+                            </label>
+                            <select
+                                required
+                                value={seguroSelecionado}
+                                onChange={(e) => setSeguroSelecionado(e.target.value)}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            >
+                                <option value="" disabled>Selecione o seguro</option>
+                                {seguros.map((seguro: any) => (
+                                    <option key={seguro.id} value={seguro.id}>
+                                        {`${seguro.cobertura} - R$ ${seguro.valor}`}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
                     </div>
 
                     <div className="flex gap-4 pt-6 border-t">
