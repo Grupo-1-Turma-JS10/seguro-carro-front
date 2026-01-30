@@ -56,3 +56,20 @@ seguro-carro-front/
 ├─ README.md
 └─ ... (eslint, prettier, configs)
 ``
+ ##Como executar localmente
+
+# 1) Instale as dependências
+npm install
+# ou
+yarn
+
+# 2) Rode em modo desenvolvimento
+npm run dev
+# ou
+yarn dev
+
+# Acesse: http://localhost:5173
+
+
+
+
